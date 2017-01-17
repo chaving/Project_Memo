@@ -13,7 +13,7 @@
 
 - (void)addNewFolder:(UIAlertController *)alertController;
 - (NSArray *)requestFolderData;
-
-+ (void)testDataCenter;
+- (void)deleteFolderData:(UITableView *)tableview;
+- (void)deleteOneFolder:(NSIndexPath *)indexPath;
 
 @end

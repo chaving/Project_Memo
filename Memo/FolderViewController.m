@@ -9,21 +9,23 @@
 #import "FolderViewController.h"
 #import "ListViewController.h"
 
-#import "AppDelegate.h"
-#import "Folder+CoreDataClass.h"
+#import "DataCenter.h"
 
-@interface FolderViewController () <UITableViewDelegate, UITableViewDataSource>
+typedef NS_ENUM(NSInteger, TableViewType) {
+    TableViewEditingType,
+    TableViewDefultType,
+};
 
-@property (strong,nonatomic) AppDelegate *appDelegate;
-@property (strong,nonatomic) NSManagedObjectContext *context;
+@interface FolderViewController () <UITableViewDelegate, UITableViewDataSource, UITextViewDelegate>
+
+@property DataCenter *dataCenter;
 
 @property (weak, nonatomic) IBOutlet UITableView *folderTableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editingButton;
-
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editingFolderButton;
 
 @property NSArray *folderListArray;
-
+@property(nonatomic, strong)UIAlertAction *okAction;
 
 @end
 
@@ -31,36 +33,21 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
-    _appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    _context = _appDelegate.persistentContainer.viewContext;
+    self.dataCenter = [[DataCenter alloc] init];
     
-    self.folderTableView.allowsMultipleSelectionDuringEditing = YES;
-    
-    [self requestFolderData];
+    [self reloadFolderData];
 }
 
-- (void)requestFolderData{
-
-    NSError *error;
+#pragma mark - Replace Folder Data
+- (void)reloadFolderData{
     
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    
-    request.entity = [NSEntityDescription entityForName:@"Folder" inManagedObjectContext:_context];
-    self.folderListArray = [[_context executeFetchRequest:request error:&error] mutableCopy];
-    
-    if (error) {
-        NSLog(@"Error : %@", [error description]);
-    }
-    
+    self.folderListArray = [_dataCenter requestFolderData];
     [self.folderTableView reloadData];
 }
 
 #pragma mark - Add New Folder Action
 - (IBAction)addNewFolderButtonAction:(UIBarButtonItem *)sender {
-    
-    NSLog(@"Name : %@", self.editingFolderButton.title);
     
     if ([self.editingFolderButton.title isEqualToString:@"새로운 폴더"]) {
         
@@ -72,38 +59,49 @@
         [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
             
             textField.placeholder = @"이름";
+            
+            [textField addTarget:self
+                          action:@selector(alertTextFieldDidChange:)
+                forControlEvents:UIControlEventEditingChanged];
         }];
         
         id makeFolderHandler = ^(UIAlertAction * _Nonnull action) {
-            
-            Folder *folderEntity = [NSEntityDescription insertNewObjectForEntityForName:@"Folder" inManagedObjectContext:_context];
-            folderEntity.title = alertController.textFields.firstObject.text;
-            
-            NSError *error;
-            
-            if (![_context save:&error]) {
-                NSLog(@"Error : %@", [error description]);
-            }
-            
-            [self requestFolderData];
+
+            [_dataCenter addNewFolder:alertController];
+            [self reloadFolderData];
         };
         
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"확인"
+        self.okAction = [UIAlertAction actionWithTitle:@"저장"
                                                            style:UIAlertActionStyleDefault
                                                          handler:makeFolderHandler];
+        _okAction.enabled = NO;
         
-        [alertController addAction:okAction];
+        [alertController addAction:_okAction];
         
         UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"취소"
                                                                style:UIAlertActionStyleCancel
-                                                             handler:^(UIAlertAction * _Nonnull action) {
-                                                                 
-                                                             }];
-        
+                                                             handler:nil];
         [alertController addAction:cancelAction];
         
         [self presentViewController:alertController animated:YES completion:nil];
         
+    }else{
+        
+        [_dataCenter deleteFolderData:_folderTableView];
+        [self setTheTableViewType:TableViewDefultType];
+        [self reloadFolderData];
+    }
+}
+
+// 폴더 이름이 한글자 이상 있을때 버튼 활성화
+- (void)alertTextFieldDidChange:(UITextField *)sender
+{
+    UIAlertController *alertController = (UIAlertController *)self.presentedViewController;
+    if (alertController)
+    {
+        UITextField *login = alertController.textFields.firstObject;
+        
+        _okAction.enabled = login.text.length > 0;
     }
 }
 
@@ -130,6 +128,10 @@
 
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FolderCell" forIndexPath:indexPath];
     
+    UIView *selectionColor = [[UIView alloc] init];
+    selectionColor.backgroundColor = [UIColor clearColor];
+    cell.selectedBackgroundView = selectionColor;
+    
     if (indexPath.section == 1) {
         cell.textLabel.text = [self.folderListArray[indexPath.row] valueForKey:@"title"];
     }
@@ -140,7 +142,55 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 
     if (self.folderTableView.editing == NO) {
+        
         [self performSegueWithIdentifier:@"moveToListSegue" sender:self];
+        
+    }
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    if (indexPath.section == 0) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        
+        [_dataCenter deleteOneFolder:indexPath];
+        [self setTheTableViewType:TableViewDefultType];
+        [self reloadFolderData];
+    }
+}
+
+#pragma mark - Set the Tableview Type
+- (void)setTheTableViewType:(TableViewType)type{
+    
+    switch (type) {
+        case TableViewEditingType:
+            
+            self.folderTableView.allowsMultipleSelectionDuringEditing = YES;
+            
+            [self.folderTableView setEditing:YES animated:YES];
+            
+            self.editingButton.title = @"완료";
+            self.editingFolderButton.title = @"삭제";
+            
+            break;
+        case TableViewDefultType:
+            
+            self.folderTableView.allowsMultipleSelectionDuringEditing = NO;
+            
+            self.editingButton.title = @"편집";
+            self.editingFolderButton.title = @"새로운 폴더";
+            
+            [self.folderTableView setEditing:NO animated:YES];
+            
+            break;
     }
 }
 
@@ -149,20 +199,12 @@
     
     if ([self.editingButton.title isEqualToString:@"편집"]) {
         
-        [self.folderTableView setEditing:YES animated:YES];
-        
-        self.editingButton.title = @"완료";
-        self.editingFolderButton.title = @"삭제";
+        [self setTheTableViewType:TableViewEditingType];
         
     } else {
         
-        self.editingButton.title = @"편집";
-        self.editingFolderButton.title = @"새로운 폴더";
-        
-        [self.folderTableView setEditing:NO animated:YES];
+        [self setTheTableViewType:TableViewDefultType];
     }
-    
-    
 }
 
 #pragma mark - Segue Method

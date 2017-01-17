@@ -31,11 +31,7 @@
     return self;
 }
 
-+ (void)testDataCenter{
-
-    NSLog(@"들어오냐!!!!");
-}
-
+#pragma mark - Add Folder
 - (void)addNewFolder:(UIAlertController *)alertController{
 
     NSLog(@"Add Folder");
@@ -48,29 +44,94 @@
     if (![_context save:&error]) {
         NSLog(@"Error : %@", [error description]);
     }
-    
-//    [self requestFolderData];
 }
 
+#pragma mark - Request Folder Data
 - (NSArray *)requestFolderData{
     
-    NSLog(@"request");
+    NSLog(@"Request Folder Data");
     
     NSError *error;
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     
     request.entity = [NSEntityDescription entityForName:@"Folder" inManagedObjectContext:_context];
-    NSArray *folderArray = [[_context executeFetchRequest:request error:&error] mutableCopy];
+    NSArray *folderListArray = [[_context executeFetchRequest:request error:&error] mutableCopy];
     
     if (error) {
         NSLog(@"Error : %@", [error description]);
     }
     
-    NSLog(@"Array : %@", [folderArray valueForKey:@"title"]);
-    NSLog(@"title : %@", [folderArray[0] valueForKey:@"title"]);
-    
-    return folderArray;
+    return folderListArray;
 }
+
+#pragma mark - Delete Folder
+- (void)deleteFolderData:(UITableView *)tableview{
+    
+    NSLog(@"Delete Data");
+
+    NSArray *selectedRows = [tableview indexPathsForSelectedRows];
+    
+    NSArray *folderListArray = [self requestFolderData];
+    
+    NSError *error;
+    
+    for (NSInteger i = 0; i < selectedRows.count; i ++) {
+    
+        NSIndexPath *firstIndexPath = [selectedRows objectAtIndex:i];
+        
+        Folder *deleteIndex = [folderListArray objectAtIndex:firstIndexPath.row];
+        
+        [_context deleteObject:deleteIndex];
+        [_context save:&error];
+    }
+    
+    [tableview reloadData];
+}
+
+#pragma mark - Delete One Data
+- (void)deleteOneFolder:(NSIndexPath *)indexPath{
+
+    NSLog(@"Delete One");
+    
+    NSError *error;
+    
+    NSArray *folderListArray = [self requestFolderData];
+    
+    Folder *deleteIndex = [folderListArray objectAtIndex:indexPath.row];
+    
+    [_context deleteObject:deleteIndex];
+    [_context save:&error];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @end
