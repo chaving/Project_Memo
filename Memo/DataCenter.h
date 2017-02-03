@@ -16,4 +16,7 @@
 - (void)deleteFolderData:(UITableView *)tableview;
 - (void)deleteOneFolder:(NSIndexPath *)indexPath;
 
+- (void)addNewMemo:(UITextView *)textView;
+- (NSArray *)requestMemoData;
+
 @end

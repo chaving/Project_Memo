@@ -10,6 +10,7 @@
 		5F019A811E2C780900A90D00 /* Folder+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F019A7B1E2C780900A90D00 /* Folder+CoreDataProperties.m */; };
 		5F019A831E2C780900A90D00 /* Content+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F019A7F1E2C780900A90D00 /* Content+CoreDataProperties.m */; };
 		5F019A861E2C8B3800A90D00 /* DataCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F019A851E2C8B3800A90D00 /* DataCenter.m */; };
+		5F1CE6111E2DFEEA00C70F9D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F1CE6101E2DFEEA00C70F9D /* CoreLocation.framework */; };
 		5F1D07B11E27850800A7A1A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F1D07AF1E27850800A7A1A9 /* Main.storyboard */; };
 		5F376D8A1E27694900090EDB /* FolderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F376D891E27694900090EDB /* FolderViewController.m */; };
 		5F376D8D1E27695000090EDB /* ListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F376D8C1E27695000090EDB /* ListViewController.m */; };
@@ -29,6 +30,7 @@
 		5F019A7F1E2C780900A90D00 /* Content+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Content+CoreDataProperties.m"; sourceTree = "<group>"; };
 		5F019A841E2C8B3800A90D00 /* DataCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCenter.h; sourceTree = "<group>"; };
 		5F019A851E2C8B3800A90D00 /* DataCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataCenter.m; sourceTree = "<group>"; };
+		5F1CE6101E2DFEEA00C70F9D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		5F1D07B01E27850800A7A1A9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5F376D881E27694900090EDB /* FolderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderViewController.h; sourceTree = "<group>"; };
 		5F376D891E27694900090EDB /* FolderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderViewController.m; sourceTree = "<group>"; };
@@ -43,7 +45,7 @@
 		5F8AA05F1E260FC30059ED71 /* Memo.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Memo.xcdatamodel; sourceTree = "<group>"; };
 		5F8AA0611E260FC30059ED71 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5F8AA0641E260FC30059ED71 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		5F8AA0661E260FC30059ED71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5F8AA0661E260FC30059ED71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Memo/Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,12 +53,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F1CE6111E2DFEEA00C70F9D /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5F1CE60F1E2DFEEA00C70F9D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5F1CE6101E2DFEEA00C70F9D /* CoreLocation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5F1D07AA1E277E7700A7A1A9 /* Storyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -64,15 +75,6 @@
 				5F8AA0631E260FC30059ED71 /* LaunchScreen.storyboard */,
 			);
 			name = Storyboard;
-			sourceTree = "<group>";
-		};
-		5F1D07AB1E277E8D00A7A1A9 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				5F8AA0661E260FC30059ED71 /* Info.plist */,
-				5F8AA05E1E260FC30059ED71 /* Memo.xcdatamodeld */,
-			);
-			name = Data;
 			sourceTree = "<group>";
 		};
 		5F1D07AC1E277EA600A7A1A9 /* ViewController */ = {
@@ -88,15 +90,26 @@
 			name = ViewController;
 			sourceTree = "<group>";
 		};
+		5F7D69491E42F04B00A31186 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				5F019A7E1E2C780900A90D00 /* Content+CoreDataProperties.h */,
+				5F019A7F1E2C780900A90D00 /* Content+CoreDataProperties.m */,
+				5F019A7A1E2C780900A90D00 /* Folder+CoreDataProperties.h */,
+				5F019A7B1E2C780900A90D00 /* Folder+CoreDataProperties.m */,
+				5F8AA05E1E260FC30059ED71 /* Memo.xcdatamodeld */,
+				5F8AA0661E260FC30059ED71 /* Info.plist */,
+			);
+			name = Data;
+			path = ..;
+			sourceTree = "<group>";
+		};
 		5F8AA0461E260FC30059ED71 = {
 			isa = PBXGroup;
 			children = (
-				5F019A7A1E2C780900A90D00 /* Folder+CoreDataProperties.h */,
-				5F019A7B1E2C780900A90D00 /* Folder+CoreDataProperties.m */,
-				5F019A7E1E2C780900A90D00 /* Content+CoreDataProperties.h */,
-				5F019A7F1E2C780900A90D00 /* Content+CoreDataProperties.m */,
 				5F8AA0511E260FC30059ED71 /* Memo */,
 				5F8AA0501E260FC30059ED71 /* Products */,
+				5F1CE60F1E2DFEEA00C70F9D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -118,7 +131,7 @@
 				5F019A851E2C8B3800A90D00 /* DataCenter.m */,
 				5F1D07AC1E277EA600A7A1A9 /* ViewController */,
 				5F1D07AA1E277E7700A7A1A9 /* Storyboard */,
-				5F1D07AB1E277E8D00A7A1A9 /* Data */,
+				5F7D69491E42F04B00A31186 /* Data */,
 				5F8AA0611E260FC30059ED71 /* Assets.xcassets */,
 				5F8AA0521E260FC30059ED71 /* Supporting Files */,
 			);
@@ -382,7 +395,8 @@
 				5F8AA05F1E260FC30059ED71 /* Memo.xcdatamodel */,
 			);
 			currentVersion = 5F8AA05F1E260FC30059ED71 /* Memo.xcdatamodel */;
-			path = Memo.xcdatamodeld;
+			name = Memo.xcdatamodeld;
+			path = Memo/Memo.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSFetchRequest<Content *> *)fetchRequest;
 
-@property (nullable, nonatomic, copy) NSString *title;
 @property (nullable, nonatomic, copy) NSString *text;
 @property (nullable, nonatomic, copy) NSString *date;
 

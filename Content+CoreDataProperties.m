@@ -15,7 +15,6 @@
 	return [[NSFetchRequest alloc] initWithEntityName:@"Content"];
 }
 
-@dynamic title;
 @dynamic text;
 @dynamic date;
 

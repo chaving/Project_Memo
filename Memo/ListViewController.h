@@ -10,4 +10,6 @@
 
 @interface ListViewController : UIViewController
 
+@property NSInteger folderIndex;
+
 @end

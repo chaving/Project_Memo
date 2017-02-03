@@ -9,8 +9,8 @@
 #import "DataCenter.h"
 
 #import "AppDelegate.h"
-#import "Folder+CoreDataClass.h"
-#import "Content+CoreDataClass.h"
+#import "Folder+CoreDataProperties.h"
+#import "Content+CoreDataProperties.h"
 
 @interface DataCenter ()
 
@@ -36,7 +36,9 @@
 
     NSLog(@"Add Folder");
     
-    Folder *folderEntity = [NSEntityDescription insertNewObjectForEntityForName:@"Folder" inManagedObjectContext:_context];
+    Folder *folderEntity = [NSEntityDescription insertNewObjectForEntityForName:@"Folder"
+                                                         inManagedObjectContext:_context];
+    
     folderEntity.title = alertController.textFields.firstObject.text;
     
     NSError *error;
@@ -53,10 +55,13 @@
     
     NSError *error;
     
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSFetchRequest *request = [Folder fetchRequest];
     
-    request.entity = [NSEntityDescription entityForName:@"Folder" inManagedObjectContext:_context];
     NSArray *folderListArray = [[_context executeFetchRequest:request error:&error] mutableCopy];
+    
+    NSLog(@"Folder Data Array : %@", folderListArray);
+    
+    NSLog(@"Folder Data Array Title : %@", [folderListArray valueForKey:@"title"]);
     
     if (error) {
         NSLog(@"Error : %@", [error description]);
@@ -104,6 +109,52 @@
     [_context save:&error];
 }
 
+//-----------------------------------------------------------------------
+
+
+#pragma mark - Add New Memo
+- (void)addNewMemo:(UITextView *)textView{
+    
+    NSLog(@"Add Memo");
+    
+    Content *contentEntity = [NSEntityDescription insertNewObjectForEntityForName:@"Content"
+                                                         inManagedObjectContext:_context];
+    
+    NSDateFormatter *nowDate = [[NSDateFormatter alloc] init];
+    nowDate.dateFormat = @"yyyy년 MM월 dd일 hh:mm a";
+    
+    contentEntity.text = textView.text;
+    contentEntity.date = [nowDate stringFromDate:[NSDate date]];
+    
+    NSError *error;
+    if (![_context save:&error]) {
+        NSLog(@"Error : %@", [error description]);
+    }
+    
+    [self requestMemoData];
+}
+
+
+#pragma mark - Request Memo Data
+- (NSArray *)requestMemoData{
+    
+    NSLog(@"Request Memo Data");
+    
+    NSError *error;
+    
+    NSFetchRequest *request = [Content fetchRequest];
+    
+    NSArray *memoListArray = [[_context executeFetchRequest:request error:&error] mutableCopy];
+    
+    NSLog(@"Memo Data Array : %@", memoListArray);
+    
+    if (error) {
+        NSLog(@"Error : %@", [error description]);
+    }
+    
+    return memoListArray;
+}
+
 
 
 
@@ -135,3 +186,6 @@
 
 
 @end
+
+
+

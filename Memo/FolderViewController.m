@@ -11,10 +11,10 @@
 
 #import "DataCenter.h"
 
-typedef NS_ENUM(NSInteger, TableViewType) {
+typedef enum{
     TableViewEditingType,
     TableViewDefultType,
-};
+} TableViewType;
 
 @interface FolderViewController () <UITableViewDelegate, UITableViewDataSource, UITextViewDelegate>
 
@@ -26,6 +26,8 @@ typedef NS_ENUM(NSInteger, TableViewType) {
 
 @property NSArray *folderListArray;
 @property(nonatomic, strong)UIAlertAction *okAction;
+
+@property NSInteger selectedRow;
 
 @end
 
@@ -72,8 +74,8 @@ typedef NS_ENUM(NSInteger, TableViewType) {
         };
         
         self.okAction = [UIAlertAction actionWithTitle:@"저장"
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:makeFolderHandler];
+                                                 style:UIAlertActionStyleDefault
+                                               handler:makeFolderHandler];
         _okAction.enabled = NO;
         
         [alertController addAction:_okAction];
@@ -143,8 +145,9 @@ typedef NS_ENUM(NSInteger, TableViewType) {
 
     if (self.folderTableView.editing == NO) {
         
+        self.selectedRow = indexPath.row;
+        NSLog(@"Select : %ld", _selectedRow);
         [self performSegueWithIdentifier:@"moveToListSegue" sender:self];
-        
     }
 }
 
@@ -181,6 +184,7 @@ typedef NS_ENUM(NSInteger, TableViewType) {
             self.editingFolderButton.title = @"삭제";
             
             break;
+            
         case TableViewDefultType:
             
             self.folderTableView.allowsMultipleSelectionDuringEditing = NO;
@@ -212,6 +216,9 @@ typedef NS_ENUM(NSInteger, TableViewType) {
     
     if ([segue.identifier isEqualToString:@"moveToListSegue"]) {
         
+        NSLog(@"Prepare For Segue");
+        ListViewController *nextVC = [segue destinationViewController];
+        nextVC.folderIndex = _selectedRow;
     }
 }
 
